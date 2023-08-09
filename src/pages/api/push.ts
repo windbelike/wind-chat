@@ -2,7 +2,15 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import Pusher from 'pusher'
 
 type Data = {
-  name: string
+  code: number
+  message?: string
+  data?: any
+}
+
+type Message = {
+  createdAt: string
+  content: string
+  sender: string
 }
 
 const pusher = new Pusher({
@@ -17,10 +25,14 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  console.log("body:", req.body)
-  res.status(200).json({ name: 'John Doe' })
+  if (req.method != "POST") {
+    res.status(400).json({ code: 400, message: "invalid method" })
+    return
+  }
 
-  pusher.trigger("my-channel", "my-event", {
-    message: "hello world"
-  });
+  console.log("body:", req.body)
+  const msg: Message = JSON.parse(req.body)
+  pusher.trigger("my-channel", "chat", msg) 
+
+  res.status(200).json({ code: 0, data: 'John Doe' })
 }

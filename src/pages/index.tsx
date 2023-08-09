@@ -1,30 +1,24 @@
 import Pusher from 'pusher-js';
 import { useEffect, useState, KeyboardEvent } from 'react';
 
-export default function Home() {
-  const [data, setData] = useState('no data')
-  const [username, setUsername] = useState('Anonymous')
-  useEffect(() => {
-    // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
-    var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!
-    });
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('my-event', (data: any) => {
-      console.log("data:", data)
-      setData(data.message)
-    });
+async function pushMsg(msg: Message) {
 
-    return () => pusher.disconnect()
-  }, [])
+  const res = await fetch('/api/push', {
+    method: 'POST',
+    body: JSON.stringify(msg)
+  })
+
+  console.log("push msg result:", res)
+}
+
+export default function Home() {
+  const [username, setUsername] = useState('Anonymous')
 
   return (
     <>
       <div className='container min-h-screen flex justify-center'>
         <div className='mt-48'>
           name: <input placeholder='Input you name' onChange={e => setUsername(e.target.value)} />
-          <div> last received data: {data} </div>
         </div>
         <div className='max-w-2xl grow pt-64'>
           <Chat currUser={{ name: username }} />
@@ -45,20 +39,43 @@ function Chat({ currUser }: ChatProps) {
   const contentLenValid = input.length <= maxLen
   const contentLenColor = contentLenValid ? "text-gray-700" : "text-red-500"
 
+  // init pusher websocket
+  useEffect(() => {
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+    var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!
+    });
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('chat', (data: any) => {
+      data.createdAt = new Date(data.createdAt) 
+      console.log("data:", data)
+      renderMsg(data)
+    });
+
+    return () => pusher.disconnect()
+  }, [])
+
   function cleanInput() {
     setInput('')
   }
 
-  function sendMsg(msg: Message) {
+  function renderMsg(msg: Message) {
     setHistory(old => {
       return [...old, msg]
     })
+  }
+
+  function sendMsg(msg: Message) {
+    // self msg
+    // renderMsg(msg)
     cleanInput()
     // wait for next tick
     setTimeout(() => {
       const msgScrollElement = document?.getElementById('msgScroll')
       msgScrollElement?.scrollTo(0, msgScrollElement?.scrollHeight)
     }, 0)
+    pushMsg(msg)
   }
 
   function onKeyDownMessaging(e: KeyboardEvent<HTMLInputElement>) {
