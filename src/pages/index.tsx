@@ -48,7 +48,7 @@ function Chat({ currUser }: ChatProps) {
     });
     var channel = pusher.subscribe('my-channel');
     channel.bind('chat', (data: any) => {
-      data.createdAt = new Date(data.createdAt) 
+      data.createdAt = new Date(data.createdAt)
       console.log("data:", data)
       renderMsg(data)
     });
@@ -64,17 +64,22 @@ function Chat({ currUser }: ChatProps) {
     setHistory(old => {
       return [...old, msg]
     })
+    scrollToButton()
   }
 
-  function sendMsg(msg: Message) {
-    // self msg
-    // renderMsg(msg)
-    cleanInput()
+  function scrollToButton() {
     // wait for next tick
     setTimeout(() => {
       const msgScrollElement = document?.getElementById('msgScroll')
       msgScrollElement?.scrollTo(0, msgScrollElement?.scrollHeight)
     }, 0)
+  }
+
+  function sendMsg(msg: Message) {
+    // self msg
+    // renderMsg(msg)
+    // todo handle sent by self msg
+    cleanInput()
     pushMsg(msg)
   }
 
