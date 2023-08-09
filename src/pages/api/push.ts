@@ -21,7 +21,7 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
@@ -30,9 +30,8 @@ export default function handler(
     return
   }
 
-  console.log("body:", req.body)
   const msg: Message = JSON.parse(req.body)
-  pusher.trigger("my-channel", "chat", msg) 
+  await pusher.trigger("my-channel", "chat", msg) 
 
-  res.status(200).json({ code: 0, data: 'John Doe' })
+  res.status(200).json({ code: 0, data: msg})
 }
