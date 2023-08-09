@@ -13,12 +13,12 @@ const pusher = new Pusher({
   useTLS: true
 });
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
   console.log("query:", req.query)
-  pusher.trigger("my-channel", "my-event", {
+  await pusher.trigger("my-channel", "my-event", {
     message: req.query.pushContent
   });
 
