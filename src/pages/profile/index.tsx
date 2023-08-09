@@ -2,7 +2,12 @@ import React from "react";
 import useSWR from "swr";
 
 const fetcher = async (url: string) => {
-  return await fetch(url).then((res) => res.json())
+  return await fetch(url, {
+    method: 'POST',
+    body: ''
+
+  })
+    .then((res) => res.json())
 };
 
 export default function Profile() {
