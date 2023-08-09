@@ -7,7 +7,7 @@ export default function Home() {
     // Enable pusher logging - don't include this in production
     Pusher.logToConsole = true;
     var pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-      cluster: 'us3'
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!
     });
     var channel = pusher.subscribe('my-channel');
     channel.bind('my-event', (data: any) => {

@@ -6,10 +6,10 @@ type Data = {
 }
 
 const pusher = new Pusher({
-  appId: "1648592",
+  appId: process.env.NEXT_PUBLIC_PUSHER_APP_ID!,
   key: process.env.NEXT_PUBLIC_PUSHER_KEY!,
   secret: process.env.PUSHER_SECRET!,
-  cluster: "us3",
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
   useTLS: true
 });
 
