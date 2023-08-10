@@ -13,4 +13,11 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   }
+
+  .scrollbar::-webkit-scrollbar {
+    /* background: #36383e; */
+    /* border-radius: 100vh; */
+    /* background: black */
+  }
+
 }

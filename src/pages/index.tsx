@@ -12,27 +12,21 @@ async function pushMsg(msg: Message) {
 }
 
 export default function Home() {
-  const [username, setUsername] = useState('Anonymous')
 
   return (
     <>
       <div className='container min-h-screen flex justify-center'>
-        <div className='mt-48'>
-          name: <input placeholder='Input you name' onChange={e => setUsername(e.target.value)} />
-        </div>
         <div className='max-w-2xl grow pt-64'>
-          <Chat currUser={{ name: username }} />
+          <Chat />
         </div>
       </div>
     </>
   )
 }
 
-type ChatProps = {
-  currUser: User
-}
-
-function Chat({ currUser }: ChatProps) {
+function Chat() {
+  const defaultName = "Anonymous"
+  const [username, setUsername] = useState(defaultName)
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<Array<Message>>([])
   const maxLen = 100
@@ -95,15 +89,22 @@ function Chat({ currUser }: ChatProps) {
       return
     }
     console.log("send input:", input)
-    sendMsg({ createdAt: new Date(), content: input, sender: currUser.name })
+    let sender = username
+    if (username == null || username.trim() == '') {
+      sender = defaultName
+    }
+    sendMsg({ createdAt: new Date(), content: input, sender })
   }
 
   return (
     <div className='flex-col grow bg-black rounded-md'>
-      <header className='text-gray-500 font-bold text-center p-4'>
-        ...
+      <header className='text-gray-500 text-start p-4'>
+        <input
+          className='bg-transparent outline-none text-green-500 text-xl'
+          maxLength={12}
+          placeholder={defaultName} onChange={e => setUsername(e.target.value)} />
       </header>
-      <main id="msgScroll" className='text-white h-96 overflow-y-scroll scrollbar-hide'>
+      <main id="msgScroll" className='text-white h-96 overflow-y-auto scrollbar-hide'>
         <ul>
           {history.map((item, i) => {
             return <MessageCard message={item} key={i} />
@@ -115,7 +116,7 @@ function Chat({ currUser }: ChatProps) {
         <input className='text-white bg-transparent outline-none w-full'
           value={input}
           onChange={e => setInput(e.target.value)}
-          placeholder='Say something...'
+          placeholder='Leave a tone'
           autoComplete='off'
           onKeyDown={onKeyDownMessaging}
           autoFocus
@@ -145,7 +146,7 @@ function MessageCard({ user, message, ...props }: MessageCardProps) {
   const formattedDate = formatDate(message.createdAt, "h:mm:ss tt", null)
   return (
     <li className="flex items-start justify-start px-4" {...props}>
-      <div className='font-bold text-xl'>{message.sender}&nbsp;:&nbsp;</div>
+      <div className='text-xl'>{message.sender}&nbsp;:&nbsp;</div>
       <div className="break-words min-w-0 text-xl">{message.content}</div>
       <div className="ml-auto text-gray-600 hover:underline hover:cursor-pointer">{formattedDate}</div>
     </li>
