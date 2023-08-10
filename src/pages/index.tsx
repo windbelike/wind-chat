@@ -29,6 +29,8 @@ function Chat() {
   const [username, setUsername] = useState(defaultName)
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<Array<Message>>([])
+  const [channelStatus, setChannelStatus] = useState()
+  const isChannelValid = channelStatus == "connected"
   const maxLen = 100
   const contentLenValid = input.length <= maxLen
   const contentLenColor = contentLenValid ? "text-gray-700" : "text-red-500"
@@ -46,7 +48,9 @@ function Chat() {
       console.log("data:", data)
       renderMsg(data)
     });
-
+    pusher.connection.bind("state_change", (state: any) => {
+      setChannelStatus(state.current)
+    })
     return () => pusher.disconnect()
   }, [])
 
@@ -115,8 +119,9 @@ function Chat() {
         <p className='mx-3 text-green-400 font-bold select-none'>{'>'}</p>
         <input className='text-white bg-transparent outline-none w-full'
           value={input}
+          disabled={!isChannelValid}
           onChange={e => setInput(e.target.value)}
-          placeholder='Leave a tone'
+          placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
           autoComplete='off'
           onKeyDown={onKeyDownMessaging}
           autoFocus
