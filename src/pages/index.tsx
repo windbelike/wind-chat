@@ -15,8 +15,8 @@ export default function Home() {
 
   return (
     <>
-      <div className='container min-h-screen flex justify-center'>
-        <div className='max-w-2xl grow pt-64'>
+      <div className='min-h-screen flex justify-center'>
+        <div className='container max-w-3xl grow pt-64'>
           <Chat />
         </div>
       </div>
@@ -148,7 +148,7 @@ function MessageCard({ user, message, ...props }: MessageCardProps) {
     <li className="flex items-start justify-start px-4" {...props}>
       <div className='text-xl'>{message.sender}&nbsp;:&nbsp;</div>
       <div className="break-words min-w-0 text-xl">{message.content}</div>
-      <div className="ml-auto text-gray-600 hover:underline hover:cursor-pointer">{formattedDate}</div>
+      <div className="ml-auto shrink-0 text-gray-600 hover:underline hover:cursor-pointer">{formattedDate}</div>
     </li>
   )
 }
