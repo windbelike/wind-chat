@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <>
       <div className='min-h-screen flex justify-center'>
-        <div className='container max-w-3xl grow pt-64'>
+        <div className='container max-w-3xl grow'>
           <Chat />
         </div>
       </div>
@@ -32,6 +32,7 @@ function Chat() {
   const [history, setHistory] = useState<Array<Message>>([])
   const [channelStatus, setChannelStatus] = useState()
   const isChannelValid = channelStatus == "connected"
+  const hintColor = isChannelValid ? "bg-green-500" : "bg-gray-500"
   const maxLen = 100
   const contentLenValid = input.length <= maxLen
   const contentLenColor = contentLenValid ? "text-gray-700" : "text-red-500"
@@ -103,32 +104,35 @@ function Chat() {
 
   return (
     <div className='flex-col grow bg-black rounded-md'>
-      <header className='text-gray-500 text-start p-4'>
+      <header className='flex items-center text-gray-500 text-start p-4'>
         <input
+          type='text'
           className='bg-transparent outline-none text-green-500 text-xl'
           maxLength={12}
           placeholder={defaultName} onChange={e => setUsername(e.target.value)} />
+        <div className={`${hintColor} rounded-full w-3 h-3 ml-auto`}></div>
       </header>
-      <main id="msgScroll" className='text-white h-96 overflow-y-auto scrollbar-hide'>
-        <ul>
+      <main className='flex flex-col'>
+        <ul id="msgScroll" className="h-96 overflow-y-auto scrollbar-hide">
           {history.map((item, i) => {
             return <MessageCard message={item} key={i} />
           })}
         </ul>
+        <div className='mt-auto p-4 flex items-center text-xl'>
+          <p className='mx-3 text-green-400 font-bold select-none'>{'>'}</p>
+          <input className='text-white bg-transparent outline-none w-full'
+            type='text'
+            value={input}
+            disabled={!isChannelValid}
+            onChange={e => setInput(e.target.value)}
+            placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
+            autoComplete='off'
+            onKeyDown={onKeyDownMessaging}
+            autoFocus
+          />
+          <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
+        </div>
       </main>
-      <div className='p-6 flex items-center text-xl'>
-        <p className='mx-3 text-green-400 font-bold select-none'>{'>'}</p>
-        <input className='text-white bg-transparent outline-none w-full'
-          value={input}
-          disabled={!isChannelValid}
-          onChange={e => setInput(e.target.value)}
-          placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
-          autoComplete='off'
-          onKeyDown={onKeyDownMessaging}
-          autoFocus
-        />
-        <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
-      </div>
     </div>
   )
 }
@@ -152,8 +156,8 @@ function MessageCard({ user, message, ...props }: MessageCardProps) {
   const formattedDate = formatDate(message.createdAt, "h:mm:ss tt", null)
   return (
     <li className="flex items-start justify-start px-4" {...props}>
-      <div className='text-xl'>{message.sender}&nbsp;:&nbsp;</div>
-      <div className="break-words min-w-0 text-xl">{message.content}</div>
+      <div className='text-white text-xl'>{message.sender}&nbsp;:&nbsp;</div>
+      <div className="text-white break-words min-w-0 text-xl">{message.content}</div>
       <div className="ml-auto shrink-0 text-gray-600 hover:underline hover:cursor-pointer">{formattedDate}</div>
     </li>
   )
