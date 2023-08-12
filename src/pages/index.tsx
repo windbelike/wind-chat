@@ -121,7 +121,6 @@ function Chat() {
             autoComplete='off'
             autoFocus
           />
-          <input placeholder='nothing input'/>
           <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
         </form>
       </main>
