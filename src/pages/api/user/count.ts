@@ -8,7 +8,6 @@ export default async function handler(
 ) {
 
   try {
-
     // const result = await pusher.get({ path: "/channels/my-channel/users" });
     const result = await pusher.get({ path: "/channels/my-channel" });
     if (result.status === 200) {
@@ -17,8 +16,10 @@ export default async function handler(
       console.log("user:", users)
     }
     res.status(200).json({ code: 0, data: { count: result } })
+
+    return
   } catch (err) {
     console.log(err)
   }
-  res.json("not good")
+  res.status(200).json("not good")
 }
