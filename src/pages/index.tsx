@@ -1,6 +1,6 @@
 import { formatDate } from '@/utils/time-utils';
 import Pusher from 'pusher-js';
-import { useEffect, useState, KeyboardEvent, FormEvent } from 'react';
+import { useEffect, useState, KeyboardEvent, FormEvent, useRef } from 'react';
 
 async function pushMsg(msg: Message) {
 
@@ -36,6 +36,7 @@ function Chat() {
   const maxLen = 100
   const contentLenValid = input.length <= maxLen
   const contentLenColor = contentLenValid ? "text-gray-700" : "text-red-500"
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // init pusher websocket
   useEffect(() => {
@@ -69,10 +70,9 @@ function Chat() {
 
   function scrollToButton() {
     // wait for next tick
-    setTimeout(() => {
-      const msgScrollElement = document?.getElementById('msgScroll')
-      msgScrollElement?.scrollTo(0, msgScrollElement?.scrollHeight)
-    }, 0)
+    if (messagesEndRef.current != null) {
+      setTimeout(() => messagesEndRef.current!.scrollIntoView(), 0)
+    }
   }
 
   function sendMsg(msg: Message) {
@@ -85,6 +85,9 @@ function Chat() {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (input == null || input.trim() == '') {
+      return
+    }
     console.log("send input:", input)
     let sender = username
     if (username == null || username.trim() == '') {
@@ -109,6 +112,7 @@ function Chat() {
           {history.map((item, i) => {
             return <MessageCard message={item} key={i} />
           })}
+          <div ref={messagesEndRef} style={{ height: 0 }} />
         </ul>
         <form onSubmit={handleSubmit} className='mt-auto p-4 flex items-center text-xl'>
           <p className='mx-3 text-green-400 font-bold select-none'>{'>'}</p>
@@ -120,7 +124,6 @@ function Chat() {
             placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
             autoComplete='off'
             autoFocus
-            confirm-type='send'
           />
           <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
         </form>
