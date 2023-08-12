@@ -1,6 +1,6 @@
 import { formatDate } from '@/utils/time-utils';
 import Pusher from 'pusher-js';
-import { useEffect, useState, KeyboardEvent } from 'react';
+import { useEffect, useState, KeyboardEvent, FormEvent } from 'react';
 
 async function pushMsg(msg: Message) {
 
@@ -83,17 +83,8 @@ function Chat() {
     pushMsg(msg)
   }
 
-  function onKeyDownMessaging(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.nativeEvent.isComposing) {
-      // handle chinese keyboard composing
-      return
-    }
-    if (e.code != 'Enter' || input.length == 0 || input.trim().length == 0) {
-      return
-    }
-    if (!contentLenValid) {
-      return
-    }
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     console.log("send input:", input)
     let sender = username
     if (username == null || username.trim() == '') {
@@ -101,6 +92,7 @@ function Chat() {
     }
     sendMsg({ createdAt: new Date(), content: input, sender })
   }
+
 
   return (
     <div className='flex-col grow bg-black rounded-md'>
@@ -118,7 +110,7 @@ function Chat() {
             return <MessageCard message={item} key={i} />
           })}
         </ul>
-        <div className='mt-auto p-4 flex items-center text-xl'>
+        <form onSubmit={handleSubmit} className='mt-auto p-4 flex items-center text-xl'>
           <p className='mx-3 text-green-400 font-bold select-none'>{'>'}</p>
           <input className='text-white bg-transparent outline-none w-full'
             type='text'
@@ -127,11 +119,11 @@ function Chat() {
             onChange={e => setInput(e.target.value)}
             placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
             autoComplete='off'
-            onKeyDown={onKeyDownMessaging}
             autoFocus
           />
+          <input placeholder='nothing input'/>
           <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
-        </div>
+        </form>
       </main>
     </div>
   )

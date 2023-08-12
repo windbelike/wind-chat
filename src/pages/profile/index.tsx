@@ -1,20 +1,18 @@
-import React from "react";
-import useSWR from "swr";
-
-const fetcher = async (url: string) => {
-  return await fetch(url, {
-    method: 'POST',
-    body: ''
-
-  })
-    .then((res) => res.json())
-};
+import React, { FormEvent } from "react";
 
 export default function Profile() {
-  const { data, error, isLoading } = useSWR('/api/push', fetcher)
 
-  if (error) return <div>failed to load</div>
-  if (isLoading) return <div>loading...</div>
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    console.log(e.target)
+  }
 
-  return <div>hello {JSON.stringify(data)}!</div>
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <button className="p-6 bg-blue-500"> submit </button>
+        <button type="button" className="p-6 bg-red-500"> cancel </button>
+      </form>
+    </>
+  )
 }
