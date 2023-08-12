@@ -1,6 +1,6 @@
+import { formatDate } from '@/utils/time-utils';
 import Pusher from 'pusher-js';
 import { useEffect, useState, KeyboardEvent } from 'react';
-import { formatDate } from './components/time-utils';
 
 async function pushMsg(msg: Message) {
 
