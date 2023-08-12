@@ -120,6 +120,7 @@ function Chat() {
             placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
             autoComplete='off'
             autoFocus
+            confirm-type='send'
           />
           <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
         </form>
