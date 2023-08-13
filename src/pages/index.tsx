@@ -16,8 +16,8 @@ export default function Home() {
 
   return (
     <>
-      <div className='min-h-screen flex justify-center'>
-        <div className='container max-w-3xl grow'>
+      <div className='min-h-screen'>
+        <div className='container mx-auto'>
           <Chat />
         </div>
       </div>
@@ -33,7 +33,7 @@ function Chat() {
   const [channelStatus, setChannelStatus] = useState()
   const isChannelValid = channelStatus == "connected"
   const hintColor = isChannelValid ? "bg-green-500" : "bg-gray-500"
-  const maxLen = 100
+  const maxLen = 180
   const contentLenValid = input.length <= maxLen
   const contentLenColor = contentLenValid ? "text-gray-700" : "text-red-500"
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -90,6 +90,9 @@ function Chat() {
     }
     console.log("send input:", input)
     let sender = username
+    if (!contentLenValid) {
+      return
+    }
     if (username == null || username.trim() == '') {
       sender = defaultName
     }
@@ -98,7 +101,7 @@ function Chat() {
 
 
   return (
-    <div className='flex-col grow bg-black rounded-md'>
+    <div className='flex flex-col grow bg-black rounded-md h-screen'>
       <header className='flex items-center text-gray-500 text-start p-4'>
         <input
           type='text'
@@ -107,27 +110,25 @@ function Chat() {
           placeholder={defaultName} onChange={e => setUsername(e.target.value)} />
         <div className={`${hintColor} rounded-full w-3 h-3 ml-auto`}></div>
       </header>
-      <main className='flex flex-col'>
-        <ul id="msgScroll" className="h-96 overflow-y-auto scrollbar-hide">
-          {history.map((item, i) => {
-            return <MessageCard message={item} key={i} />
-          })}
-          <div ref={messagesEndRef} style={{ height: 0 }} />
-        </ul>
-        <form onSubmit={handleSubmit} className='mt-auto p-4 flex items-center text-xl'>
-          <p className='mx-3 text-green-400 font-bold select-none'>{'>'}</p>
-          <input className='text-white bg-transparent outline-none w-full'
-            type='text'
-            value={input}
-            disabled={!isChannelValid}
-            onChange={e => setInput(e.target.value)}
-            placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
-            autoComplete='off'
-            autoFocus
-          />
-          <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
-        </form>
-      </main>
+      <ul id="msgScroll" className="overflow-y-auto scrollbar-hide">
+        {history.map((item, i) => {
+          return <MessageCard message={item} key={i} />
+        })}
+        <div ref={messagesEndRef} style={{ height: 0 }} />
+      </ul>
+      <form onSubmit={handleSubmit} className='mt-auto p-4 flex items-center text-xl'>
+        <p className='mx-3 text-green-400 font-bold select-none'>{'>'}</p>
+        <input className='text-white bg-transparent outline-none w-full'
+          type='text'
+          value={input}
+          disabled={!isChannelValid}
+          onChange={e => setInput(e.target.value)}
+          placeholder={isChannelValid ? 'Leave a tone' : 'Loading...'}
+          autoComplete='off'
+          autoFocus
+        />
+        <span className={`mx-2 ${contentLenColor} select-none shrink-0 `}>{input.length} / {maxLen}</span>
+      </form>
     </div>
   )
 }
