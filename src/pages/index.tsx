@@ -48,7 +48,7 @@ function Chat() {
     var channel = pusher.subscribe('my-channel');
     channel.bind('chat', (data: any) => {
       data.createdAt = new Date(data.createdAt)
-      console.log("data:", data)
+      // console.log("data:", data)
       renderMsg(data)
     });
     pusher.connection.bind("state_change", (state: any) => {
