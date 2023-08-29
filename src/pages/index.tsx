@@ -65,13 +65,17 @@ function Chat() {
     setHistory(old => {
       return [...old, msg]
     })
-    scrollToButton()
+    scrollToBottom()
   }
 
-  function scrollToButton() {
+  function scrollToBottom() {
     // wait for next tick
     if (messagesEndRef.current != null) {
-      setTimeout(() => messagesEndRef.current!.scrollIntoView(), 0)
+      setTimeout(() => messagesEndRef.current!.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+        inline: 'nearest'
+      }), 0)
     }
   }
 
