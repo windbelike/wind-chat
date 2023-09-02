@@ -114,7 +114,7 @@ function Chat() {
           placeholder={defaultName} onChange={e => setUsername(e.target.value)} />
         <div className={`${hintColor} rounded-full w-3 h-3 ml-auto`}></div>
       </header>
-      <ul id="msgScroll" className="overflow-y-auto scrollbar-hide">
+      <ul id="msgScroll" className="overflow-y-auto">
         {history.map((item, i) => {
           return <MessageCard message={item} key={i} />
         })}
